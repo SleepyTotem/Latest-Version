@@ -18,7 +18,7 @@ jobs:
           API_URL: ${{ secrets.API_URL }}
         run: |
           URL=$(curl -s $API_URL)
-          echo "Latest version: $URL"
+          echo "Latest version: $API_URL"
           echo $URL > version.txt
 
       - name: Commit and push version file

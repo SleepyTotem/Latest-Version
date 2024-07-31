@@ -1,0 +1,31 @@
+name: Update Version File
+
+on:
+  schedule:
+    - cron: '*/10 * * * *' # Runs every 10 minutes
+  workflow_dispatch:
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Fetch latest version
+        env:
+          API_URL: ${{ secrets.API_URL }}
+        run: |
+          URL=$(curl -s $API_URL)
+          echo "Latest version: $URL"
+          echo $URL > version.txt
+
+      - name: Commit and push version file
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add version.txt
+          git commit -m "Update version file to $URL"
+          git push
+        if: success()

@@ -2,9 +2,8 @@ name: Update Version File
 
 on:
   schedule:
-    - cron: '*/10 * * * *' # Runs every 10 minutes
+    - cron: '*/10 * * * *'
   workflow_dispatch:
-
 jobs:
   update-version:
     runs-on: ubuntu-latest
@@ -13,12 +12,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Debug environment variables
+        run: |
+          echo "API_URL=${{ secrets.API_URL }}"
+          # Check if the secret is correctly loaded
+          echo "API_URL length: ${#API_URL}"
+        env:
+          API_URL: ${{ secrets.API_URL }}
+
       - name: Fetch latest version
         env:
           API_URL: ${{ secrets.API_URL }}
         run: |
-          URL=$(curl -s $API_URL)
-          echo "Latest version: $API_URL"
+          echo "Fetching URL: $API_URL"
+          URL=$(curl -s "$API_URL")
+          echo "Latest version: $URL"
           echo $URL > version.txt
 
       - name: Commit and push version file
